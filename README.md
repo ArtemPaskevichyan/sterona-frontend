@@ -1,4 +1,7 @@
 # sterona-frontend
+Sterona – community task manager (for MIREA)
+
+<hr>
 
 This template should help get you started developing with Vue 3 in Vite.
 
