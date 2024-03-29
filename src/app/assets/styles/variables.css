@@ -1,0 +1,25 @@
+:root {
+    --theme-color: #327CEC;
+    --theme-color-light: #5498FF;
+
+    --element-light-gray: #F2F2F2;
+    --element-gray: #D7D7D7;
+
+    --text-black: #262626;
+    --text-gray: #B9B9B9;
+    --text-red: #FF1C1C;
+
+    --default-background-color: white;
+
+    --default-font-size: 14px;
+    --default-font-family: "Nunito Sans";
+
+    --extra-light-font-weight: 200;
+    --light-font-weight: 300;
+    --regular-font-weight: 400;
+    --medium-font-weight: 500;
+    --semi-bold-font-weight: 600;
+    --bold-font-weight: 700;
+    --extra-bold-font-weight: 800;
+    --black-font-weight: 900;
+}
