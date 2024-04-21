@@ -1,16 +1,33 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref, watch, reactive } from "vue";
 import { UIButton, UIButtonStates } from "@/shared/button";
 import { UIInput } from "@/shared/input";
 import { UIPasswordInput } from "@/features/passwordInput";
 import { LoadingWall } from "@/widgets/loadingWall";
 
 import { signupRequest } from "../api/RegistrationAPI";
+import type { AxiosError } from "axios";
+import type { SignUpModel } from "../lib/types";
+
+const isMounted = ref(false);
 
 const email = ref("");
 const password = ref("");
 const passwordAgain = ref("");
 const username = ref("");
+
+const isLoading = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
+
+const errorMessages = reactive({
+  email: "",
+  username: "",
+  password: "",
+  passwordAgain: "",
+});
 
 const mock = {
   username: "qwe",
@@ -18,21 +35,86 @@ const mock = {
   password: "123123hui",
 };
 
-const isLoading = ref(false);
+function previousValidation() {
+  let hasError = false;
 
-function previousValidation() {}
+  if (username.value === "") {
+    errorMessages.username = "Введите логин";
+    hasError = true;
+  }
+  if (email.value === "") {
+    errorMessages.email = "Введите email";
+    hasError = true;
+  }
+  if (password.value === "") {
+    errorMessages.password = "Введите пароль";
+    hasError = true;
+  }
+  if (passwordAgain.value === "") {
+    errorMessages.passwordAgain = "Введите пароль снова";
+    hasError = true;
+  }
+
+  if (password.value != passwordAgain.value) {
+    errorMessages.password = "Пароли отличаются";
+    errorMessages.passwordAgain = "Пароли отличаются";
+    hasError = true;
+  }
+
+  if (hasError) throw "invalid form";
+}
+
+watch(username, () => {
+  errorMessages.username = "";
+});
+watch(email, () => {
+  errorMessages.email = "";
+});
+watch(password, () => {
+  if (errorMessages.password == "Пароли отличаются")
+    errorMessages.passwordAgain = "";
+  errorMessages.password = "";
+});
+watch(passwordAgain, () => {
+  if (errorMessages.passwordAgain == "Пароли отличаются")
+    errorMessages.password = "";
+  errorMessages.passwordAgain = "";
+});
 
 function signup() {
-  previousValidation();
+  isLoading.value = true;
+  try {
+    previousValidation();
+  } catch (error) {
+    console.error(error);
+    return;
+  }
 
-  // signupRequest({
-  //   email: email.value,
-  //   password: password.value,
-  //   username: username.value,
-  // })
-  signupRequest(mock)
-    .then((response) => {})
-    .catch((error) => {});
+  isLoading.value = true;
+  signupRequest({
+    email: email.value,
+    password: password.value,
+    username: username.value,
+  })
+    .then((response) => {
+      console.log("HUI", response);
+    })
+    .catch((error: AxiosError) => {
+      const errorData: SignUpModel = <SignUpModel>error.response?.data ?? {};
+      if ("email" in errorData) {
+        errorMessages.email = errorData.email[0];
+      }
+      if ("password" in errorData) {
+        errorMessages.password = errorData.password[0];
+      }
+      if ("username" in errorData) {
+        errorMessages.username = errorData.username[0];
+      }
+      console.log(errorData);
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 }
 </script>
 
@@ -41,21 +123,37 @@ function signup() {
     <h2>Регистрация</h2>
     <UIInput
       v-model:value="username"
+      :error="errorMessages.username.length != 0"
       :type="'text'"
-      :placeholder="'Придумайте логин'"
+      :placeholder="
+        errorMessages.username.length == 0
+          ? 'Придумайте логин'
+          : errorMessages.username
+      "
     />
     <UIInput
       v-model:value="email"
+      :error="errorMessages.email.length != 0"
       :type="'email'"
-      :placeholder="'Почта'"
+      :placeholder="
+        errorMessages.email.length == 0 ? 'Почта' : errorMessages.email
+      "
     />
     <UIPasswordInput
       v-model:value="password"
-      :placeholder="'Пароль'"
+      :error="errorMessages.password.length != 0"
+      :placeholder="
+        errorMessages.password.length == 0 ? 'Пароль' : errorMessages.password
+      "
     />
     <UIPasswordInput
       v-model:value="passwordAgain"
-      :placeholder="'Повторите пароль'"
+      :error="errorMessages.passwordAgain.length != 0"
+      :placeholder="
+        errorMessages.passwordAgain.length == 0
+          ? 'Повторите пароль'
+          : errorMessages.passwordAgain
+      "
     />
 
     <UIButton
@@ -65,9 +163,12 @@ function signup() {
       Создать аккаунт
     </UIButton>
   </section>
-  <!--  <teleport to="#authForm">-->
-  <!--    <LoadingWall v-if="isLoading" />-->
-  <!--  </teleport>-->
+  <teleport
+    v-if="isMounted"
+    to="#authForm"
+  >
+    <LoadingWall v-if="isLoading" />
+  </teleport>
 </template>
 
 <style scoped lang="scss">

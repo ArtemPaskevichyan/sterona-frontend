@@ -15,6 +15,10 @@ export type UIButtonProps = {
    * Defines if button has minimal width or not
    */
   short?: boolean;
+  /**
+   * Defines if square has minimal width or not
+   */
+  square?: boolean;
 };
 
 export type UIButtonSlots = {

@@ -22,6 +22,7 @@ defineSlots<UIButtonSlots>();
       primary: props.type == UIButtonStates.Primary,
       danger: props.type == UIButtonStates.Danger,
       short: props.short,
+      square: props.square,
     }"
     :disabled="props.type == UIButtonStates.Disabled"
   >
@@ -92,6 +93,12 @@ button {
 
   &.short {
     min-width: auto;
+  }
+
+  &.square {
+    padding: 5px;
+    min-width: unset;
+    width: 26px;
   }
 }
 </style>

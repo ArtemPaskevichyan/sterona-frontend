@@ -1,30 +1,78 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { UIButton, UIButtonStates } from "@/shared/button";
 import { UIInput } from "@/shared/input";
 import { UIPasswordInput } from "@/features/passwordInput";
 import { UILink } from "@/shared/link";
 import { LoadingWall } from "@/widgets/loadingWall";
 
-const email = ref("");
+import { signinRequest } from "@/widgets/loginForm/api/LoginAPI";
+
+const isMounted = ref(false);
+
+const username = ref("");
 const password = ref("");
 
 const isLoading = ref(false);
 
-function signin() {}
+onMounted(() => {
+  isMounted.value = true;
+});
+
+const errorMessages = reactive({
+  username: "",
+  password: "",
+});
+
+function previousValidation() {
+  let hasError = false;
+
+  if (username.value === "") {
+    errorMessages.username = "Введите логин";
+    hasError = true;
+  }
+  if (password.value === "") {
+    errorMessages.password = "Введите пароль";
+    hasError = true;
+  }
+
+  if (hasError) throw "invalid form";
+}
+
+function signin() {
+  try {
+    previousValidation();
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+
+  signinRequest({ password: password.value, username: username.value })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 </script>
 
 <template>
   <section class="form">
     <h2>Вход</h2>
     <UIInput
-      v-model:value="email"
-      :type="'email'"
-      :placeholder="'Почта'"
+      v-model:value="username"
+      :error="errorMessages.username.length != 0"
+      :placeholder="
+        errorMessages.username.length == 0 ? 'Логин' : errorMessages.username
+      "
     />
     <UIPasswordInput
       v-model:value="password"
-      :placeholder="'Пароль'"
+      :error="errorMessages.password.length != 0"
+      :placeholder="
+        errorMessages.password.length == 0 ? 'Пароль' : errorMessages.password
+      "
     />
     <UIButton
       :type="UIButtonStates.Primary"
@@ -34,9 +82,12 @@ function signin() {}
     </UIButton>
     <UILink>Забыли пароль</UILink>
   </section>
-  <!--  <teleport to="#authForm">-->
-  <!--    <LoadingWall v-if="isLoading" />-->
-  <!--  </teleport>-->
+  <teleport
+    v-if="isMounted"
+    to="#authForm"
+  >
+    <LoadingWall v-if="isLoading" />
+  </teleport>
 </template>
 
 <style scoped lang="scss">

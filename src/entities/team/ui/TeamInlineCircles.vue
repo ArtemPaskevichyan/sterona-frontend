@@ -1,0 +1,112 @@
+<script setup lang="ts">
+import type { Member, TeamInlineCirclesProps } from "../lib/types";
+import { TooltipWrapper } from "@/shared/tooltip";
+import { computed, reactive, ref } from "vue";
+
+const props = defineProps<TeamInlineCirclesProps>();
+
+type MemberWithTooltip = Member & { tooltipShown: boolean };
+const memberWithTooltipsRaw: MemberWithTooltip[] = [];
+props.members.forEach((e) => {
+  memberWithTooltipsRaw.push({
+    ...e,
+    tooltipShown: false,
+  });
+});
+const membersWithTooltips = reactive(memberWithTooltipsRaw);
+const isExpandTooltipShown = ref(false);
+
+const membersHidden = computed(() => {
+  return props.members.length - props.shownMembersCount;
+});
+const membersHiddenLabel = computed(() => {
+  if (10 < membersHidden.value % 100 && membersHidden.value % 100 < 20)
+    return `Еще ${membersHidden.value} участников`;
+  if (membersHidden.value % 10 == 1)
+    return `Еще ${membersHidden.value} участник`;
+  if (membersHidden.value % 10 == 0)
+    return `Еще ${membersHidden.value} участников`;
+  if (membersHidden.value % 10 < 5)
+    return `Еще ${membersHidden.value} участника`;
+  if (membersHidden.value % 10 >= 5)
+    return `Еще ${membersHidden.value} участников`;
+  return "";
+});
+</script>
+
+<template>
+  <span
+    class="teamInlineCircles"
+    :style="{ '--members': shownMembersCount }"
+  >
+    <TooltipWrapper
+      :label="membersHiddenLabel"
+      :show-tooltip="isExpandTooltipShown"
+    >
+      <span
+        v-if="membersHidden > 0"
+        :style="{ '--index': props.shownMembersCount }"
+        class="teamInlineCircles__circle teamInlineCircles__circle-expand"
+        @mouseenter="isExpandTooltipShown = true"
+        @mouseleave="isExpandTooltipShown = false"
+      >
+        ...
+      </span>
+    </TooltipWrapper>
+    <TooltipWrapper
+      v-for="(member, index) in membersWithTooltips.slice(
+        0,
+        props.shownMembersCount,
+      )"
+      :key="member.id"
+      :label="member.name"
+      :show-tooltip="member.tooltipShown"
+      @mouseenter="member.tooltipShown = true"
+      @mouseleave="member.tooltipShown = false"
+    >
+      <span
+        class="teamInlineCircles__circle"
+        :style="{ '--index': index }"
+      >
+        {{ member.name[0] }}
+      </span>
+    </TooltipWrapper>
+  </span>
+</template>
+
+<style scoped lang="scss">
+.teamInlineCircles {
+  --size: 22px;
+  --halfSize: 11px;
+  display: inline-grid;
+  grid-template-columns: repeat(auto-fill, var(--halfSize));
+  grid-auto-rows: auto;
+
+  &__circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--default-background-color);
+    box-sizing: border-box;
+    background-color: var(--element-gray);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s transform;
+  }
+
+  .uiTooltipWrapper {
+    transition: 0.3s transform;
+  }
+
+  .uiTooltipWrapper:hover {
+    .teamInlineCircles__circle {
+      transform: translateY(-6px);
+    }
+
+    & ~ .uiTooltipWrapper {
+      transform: translateX(9px);
+    }
+  }
+}
+</style>

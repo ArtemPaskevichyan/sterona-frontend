@@ -65,6 +65,7 @@ watch(innerText, () => {
     border-radius: 6px;
     width: auto;
     display: flex;
+    box-sizing: border-box;
   }
 }
 
@@ -90,7 +91,7 @@ input {
 
 input:not(:placeholder-shown) ~ .placeholder {
   transform: scale(0.65);
-  bottom: 20px;
+  bottom: 18px;
   background: var(--default-background-color);
   z-index: 2;
 }

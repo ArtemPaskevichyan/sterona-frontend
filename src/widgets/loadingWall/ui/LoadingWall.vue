@@ -12,10 +12,11 @@ import { UILoader } from "@/shared/loader";
 .loadingWall {
   height: 100%;
   width: 100%;
-  position: fixed;
+  position: absolute;
   background: rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
 </style>

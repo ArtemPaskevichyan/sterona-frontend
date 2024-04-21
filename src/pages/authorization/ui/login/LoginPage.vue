@@ -14,9 +14,9 @@ const router = useRouter();
     </h4>
     <LoginForm />
     <div class="links">
-      <UILink @click="router.push({ name: 'registration' })"
-        >Регистрация</UILink
-      >
+      <UILink @click="router.push({ name: 'registration' })">
+        Регистрация
+      </UILink>
     </div>
   </div>
 </template>
