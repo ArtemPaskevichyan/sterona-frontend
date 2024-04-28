@@ -2,12 +2,28 @@
 import type { BaseBoardColumnProps } from "../lib/types";
 import { BaseTask } from "@/entities/task";
 import { StatusToColor } from "@/entities/task";
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
+import type { Member } from "@/shared/types/team";
+import UIModal from "@/shared/modal/ui/UIModal.vue";
+import { TeamMembersList } from "@/features/teamMembersLis";
 
 const props = defineProps<BaseBoardColumnProps>();
 const columnAccentColor = computed(() => {
   // @ts-ignore
   return StatusToColor[props.status].background ?? "--task-grey";
+});
+
+const isComponentLoaded = ref(false);
+
+const showModal = ref(false);
+const inModalMembers = ref<Member[]>([]);
+function showTeam(members: Member[]) {
+  inModalMembers.value = members;
+  showModal.value = true;
+}
+
+onMounted(() => {
+  isComponentLoaded.value = true;
 });
 </script>
 
@@ -22,7 +38,10 @@ const columnAccentColor = computed(() => {
   >
     <div class="baseBoardColumn__header">
       <span class="baseBoardColumn__title">{{ props.title }}</span>
-      <button class="baseBoardColumn__addButton">
+      <button
+        class="baseBoardColumn__addButton"
+        title="Создать задачу"
+      >
         <svg
           width="10"
           height="10"
@@ -46,9 +65,22 @@ const columnAccentColor = computed(() => {
         v-for="(task, index) in props.tasks"
         :key="index"
         :model="task"
+        @showTeam="showTeam"
       />
     </div>
   </div>
+  <teleport
+    v-if="isComponentLoaded"
+    to="#modal"
+  >
+    <UIModal
+      v-model:is-opened="showModal"
+      title="Исполнители"
+      :close-on-click-outside="true"
+    >
+      <TeamMembersList :members="inModalMembers" />
+    </UIModal>
+  </teleport>
 </template>
 
 <style scoped lang="scss">

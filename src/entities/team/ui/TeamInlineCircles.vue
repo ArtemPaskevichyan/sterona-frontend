@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import type { Member, TeamInlineCirclesProps } from "../lib/types";
+import type { Member } from "@/shared/types/team";
+import type {
+  TeamInlineCirclesEmits,
+  TeamInlineCirclesProps,
+} from "../lib/types";
 import { TooltipWrapper } from "@/shared/tooltip";
 import { computed, reactive, ref } from "vue";
 
 const props = defineProps<TeamInlineCirclesProps>();
+const emit = defineEmits<TeamInlineCirclesEmits>();
 
 type MemberWithTooltip = Member & { tooltipShown: boolean };
 const memberWithTooltipsRaw: MemberWithTooltip[] = [];
@@ -49,6 +54,7 @@ const membersHiddenLabel = computed(() => {
         class="teamInlineCircles__circle teamInlineCircles__circle-expand"
         @mouseenter="isExpandTooltipShown = true"
         @mouseleave="isExpandTooltipShown = false"
+        @click="emit('extend', props.members)"
       >
         ...
       </span>
@@ -78,7 +84,7 @@ const membersHiddenLabel = computed(() => {
 .teamInlineCircles {
   --size: 22px;
   --halfSize: 11px;
-  display: inline-grid;
+  display: grid;
   grid-template-columns: repeat(auto-fill, var(--halfSize));
   grid-auto-rows: auto;
 
@@ -93,6 +99,10 @@ const membersHiddenLabel = computed(() => {
     justify-content: center;
     align-items: center;
     transition: 0.3s transform;
+
+    &-expand {
+      cursor: pointer;
+    }
   }
 
   .uiTooltipWrapper {
@@ -102,6 +112,10 @@ const membersHiddenLabel = computed(() => {
   .uiTooltipWrapper:hover {
     .teamInlineCircles__circle {
       transform: translateY(-6px);
+
+      &-expand {
+        filter: brightness(0.95);
+      }
     }
 
     & ~ .uiTooltipWrapper {

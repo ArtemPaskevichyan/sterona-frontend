@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UIProgressBarSlimProps } from "@/shared/progress/lib/types";
+import type { UIProgressBarSlimProps } from "../lib/types";
 
 defineProps<UIProgressBarSlimProps>();
 </script>

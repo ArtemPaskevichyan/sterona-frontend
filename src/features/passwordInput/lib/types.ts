@@ -4,15 +4,11 @@ export type UIPasswordInputProps = {
    */
   placeholder?: string;
   /**
-   * Inputted text (v-model)
+   * v-model. Inputted text
    */
   value: string;
   /**
    * Has error
    */
   error?: boolean;
-};
-
-export type UIPasswordEmits = {
-  (e: "update:value", value: string): void;
 };

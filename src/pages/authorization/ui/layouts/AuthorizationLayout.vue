@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="auth">
+  <main class="auth">
     <div class="auth__content">
       <section
         id="authForm"
@@ -16,7 +16,7 @@
         />
       </section>
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped lang="scss">

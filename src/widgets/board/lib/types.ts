@@ -1,4 +1,4 @@
-import type { TaskModel } from "@/entities/task/lib/types";
+import type { TaskModel } from "@/shared/types/task";
 
 export type BaseBoardColumnProps = {
   /**
@@ -6,11 +6,11 @@ export type BaseBoardColumnProps = {
    */
   title: string;
   /**
-   * Status code for tasks in this column. For example 'Todo'
+   * Status code for tasks in this column. For example 'Done'
    */
   status: string;
   /**
-   * v-model. Tasks in this column
+   * Tasks in this column
    */
   tasks: TaskModel[];
 };

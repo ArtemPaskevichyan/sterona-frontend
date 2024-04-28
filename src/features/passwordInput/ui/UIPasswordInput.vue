@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import UIInput from "@/shared/input/ui/UIInput.vue";
-import { type UIPasswordInputProps, type UIPasswordEmits } from "../lib/types";
-import { ref, watch } from "vue";
+import type { UIPasswordInputProps } from "../lib/types";
+import { ref } from "vue";
 
+const value = defineModel("value", { type: String, required: true });
 const props = defineProps<UIPasswordInputProps>();
-const emit = defineEmits<UIPasswordEmits>();
 
 const hidden = ref(true);
-
-const innerText = ref(props.value);
-watch(innerText, () => {
-  emit("update:value", innerText.value);
-});
 
 function hidePassword() {
   hidden.value = true;
@@ -24,7 +19,7 @@ function showPassword() {
 
 <template>
   <UIInput
-    v-model:value="innerText"
+    v-model:value="value"
     :placeholder="props.placeholder"
     :type="hidden ? 'password' : 'text'"
     :error="props.error"

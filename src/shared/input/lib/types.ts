@@ -4,7 +4,7 @@ export type UIInputProps = {
    */
   placeholder?: string;
   /**
-   * Inputted text (v-model)
+   * v-model. Inputted text
    */
   value: string;
   /**
@@ -22,8 +22,4 @@ export type UIInputSlots = {
    * for button (like "clear" or "show/hide password")
    */
   button(): any;
-};
-
-export type UIInputEmits = {
-  (e: "update:value", value: string): void;
 };

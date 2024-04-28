@@ -38,17 +38,18 @@ const directionClass = computed(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 10;
   white-space: normal;
+  --arrow-size: 5px;
 
   &::after {
     content: "";
     position: absolute;
     width: 0;
     height: 0;
-    border: 5px solid transparent;
+    border: var(--arrow-size) solid transparent;
   }
 
   &-bottom {
-    top: 100%;
+    top: calc(100% + var(--arrow-size));
     left: 50%;
     translate: -50% 0;
 
@@ -61,7 +62,7 @@ const directionClass = computed(() => {
   }
 
   &-left {
-    right: 100%;
+    right: calc(100% + var(--arrow-size));
     top: 50%;
     translate: 0 -50%;
 
@@ -74,7 +75,7 @@ const directionClass = computed(() => {
   }
 
   &-top {
-    top: 100%;
+    top: var(100% + var(--arrow-size));
     left: 50%;
     translate: 0 -50%;
 
@@ -87,7 +88,7 @@ const directionClass = computed(() => {
   }
 
   &-right {
-    left: 100%;
+    left: calc(100% + var(--arrow-size));
     top: 50%;
     translate: 0 -50%;
 

@@ -48,11 +48,9 @@ function signin() {
   }
 
   signinRequest({ password: password.value, username: username.value })
-    .then((response) => {
-      console.log(response);
-    })
+    .then(() => {})
     .catch((error) => {
-      console.log(error);
+      console.error(error);
     });
 }
 </script>

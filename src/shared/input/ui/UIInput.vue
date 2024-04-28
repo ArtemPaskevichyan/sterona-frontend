@@ -1,25 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import {
-  type UIInputEmits,
-  type UIInputProps,
-  type UIInputSlots,
-} from "../lib/types";
+import { type UIInputProps, type UIInputSlots } from "../lib/types";
 
+const value = defineModel("value", { type: String, required: true });
 const props = withDefaults(defineProps<UIInputProps>(), {
   type: "text",
   placeholder: "",
   error: false,
 });
 
-const emit = defineEmits<UIInputEmits>();
-
 defineSlots<UIInputSlots>();
-
-const innerText = ref(props.value);
-watch(innerText, () => {
-  emit("update:value", innerText.value);
-});
 </script>
 
 <template>
@@ -29,7 +18,7 @@ watch(innerText, () => {
   >
     <div class="input__field">
       <input
-        v-model="innerText"
+        v-model="value"
         :type="props.type"
         required
         placeholder=" "
@@ -97,7 +86,7 @@ input:not(:placeholder-shown) ~ .placeholder {
 }
 
 input:placeholder-shown ~ .placeholder {
-  bottom: 5px;
+  bottom: 4px;
 }
 
 .placeholder {

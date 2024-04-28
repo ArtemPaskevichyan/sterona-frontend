@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import BaseBoardColumn from "./BaseBoardColumn.vue";
 import { MockTaskModel } from "@/entities/task";
-import { type Member, MockMembers, TeamInlineCircles } from "@/entities/team";
+import { TeamInlineCircles, MockMembers } from "@/entities/team";
+import type { Member } from "@/shared/types/team";
 import { UIButton, UIButtonStates } from "@/shared/button";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import UIModal from "@/shared/modal/ui/UIModal.vue";
+import { TeamMembersList } from "@/features/teamMembersLis";
 
 const title = ref("Board Title");
 const boardMembers = ref<Member[]>(MockMembers);
@@ -27,6 +30,19 @@ const doneTasks = [
   MockTaskModel,
   MockTaskModel,
 ].map((e) => ({ ...e, status: "Done" }));
+
+const isComponentLoaded = ref(false);
+
+const showModal = ref(false);
+const inModalMembers = ref<Member[]>([]);
+function showTeam(members: Member[]) {
+  inModalMembers.value = members;
+  showModal.value = true;
+}
+
+onMounted(() => {
+  isComponentLoaded.value = true;
+});
 </script>
 
 <template>
@@ -37,10 +53,12 @@ const doneTasks = [
         <TeamInlineCircles
           :members="boardMembers"
           :shown-members-count="3"
+          @extend="showTeam"
         />
         <UIButton
           :type="UIButtonStates.Default"
           square
+          title="Параметры доски"
         >
           <svg
             width="16"
@@ -66,6 +84,7 @@ const doneTasks = [
         <UIButton
           :type="UIButtonStates.Default"
           square
+          title="Поделиться ссылкой на доску"
         >
           <svg
             width="16"
@@ -122,6 +141,15 @@ const doneTasks = [
       />
     </div>
   </div>
+  <Teleport to="#modal">
+    <UIModal
+      v-model:is-opened="showModal"
+      title="Команда"
+      :close-on-click-outside="true"
+    >
+      <TeamMembersList :members="inModalMembers" />
+    </UIModal>
+  </Teleport>
 </template>
 
 <style scoped lang="scss">
@@ -139,7 +167,7 @@ const doneTasks = [
 
   &__title {
     color: var(--text-black);
-    font-size: var(--large-font-style);
+    font-size: var(--large-font-size);
   }
 
   &__columns {

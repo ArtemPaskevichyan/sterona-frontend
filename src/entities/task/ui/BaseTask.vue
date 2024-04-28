@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { TaskModel } from "../lib/types";
-import { StatusToColor } from "../lib/types";
+import type { TaskModel } from "@/shared/types/task";
+import { StatusToColor } from "@/shared/types/task";
 import { TeamInlineCircles } from "@/entities/team";
 import { UIProgressBarSlim } from "@/shared/progress";
 import { computed, ref } from "vue";
 import { TooltipWrapper } from "@/shared/tooltip";
+import type { BaseTaskEmits } from "../lib/types";
 
 const props = defineProps<{ model: TaskModel }>();
+const emit = defineEmits<BaseTaskEmits>();
 
 const showProgressBarTooltip = ref(false);
 
@@ -62,6 +64,7 @@ const taskColor = computed(() => {
         :members="props.model.members"
         :shown-members-count="3"
         class="baseTask__team"
+        @extend="emit('showTeam', model.members)"
       />
       <TooltipWrapper
         :show-tooltip="showProgressBarTooltip"

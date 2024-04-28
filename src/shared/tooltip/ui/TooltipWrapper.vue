@@ -22,28 +22,30 @@ const innerShowTooltip = computed(() => {
 
 function beforeShowTooltip() {
   if (tooltipWrapperElement.value && tooltipElementRef.value) {
-    console.log(
-      "TooltipWrapper:",
-      tooltipWrapperElement.value.getBoundingClientRect(),
-    );
-    console.log(
-      "Toolip:",
-      (tooltipElementRef.value.$el as HTMLElement).getBoundingClientRect(),
-    );
     const { width: twidth, height: theight } = (
       tooltipElementRef.value.$el as HTMLElement
     ).getBoundingClientRect();
-    const {
+    let {
       x: cx,
       y: cy,
       width: cwidth,
       height: cheight,
     } = tooltipWrapperElement.value.getBoundingClientRect();
-    const [screenWidth, screenHeight] = [
-      document.documentElement.clientWidth,
-      document.documentElement.clientHeight,
-    ];
-    console.log(screenWidth, screenHeight);
+
+    const appContent = document.getElementById("appContent");
+    let screenWidth: number;
+    let screenHeight: number;
+    if (appContent) {
+      screenWidth = appContent.clientWidth;
+      screenHeight = appContent.clientHeight;
+      const { x: offsetX, y: offsetY } = appContent.getBoundingClientRect();
+      cx -= offsetX;
+      cy -= offsetY;
+    } else {
+      screenWidth = document.documentElement.clientWidth;
+      screenHeight = document.documentElement.clientHeight;
+    }
+
     let showInLeft = false;
     let showInRight = false;
     let showInBottom = false;
@@ -77,13 +79,6 @@ function beforeShowTooltip() {
     ) {
       showInBottom = true;
     }
-
-    console.log(
-      `Show in bottom: ${showInBottom}`,
-      `Show in right: ${showInRight}`,
-      `Show in left: ${showInLeft}`,
-      `Show in top: ${showInTop}`,
-    );
 
     if (showInBottom) tooltipDirection.value = TooltipDirection.Bottom;
     else if (showInRight) tooltipDirection.value = TooltipDirection.Right;

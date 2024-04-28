@@ -29,12 +29,6 @@ const errorMessages = reactive({
   passwordAgain: "",
 });
 
-const mock = {
-  username: "qwe",
-  email: "hui@mail.ru",
-  password: "123123hui",
-};
-
 function previousValidation() {
   let hasError = false;
 
@@ -96,11 +90,10 @@ function signup() {
     password: password.value,
     username: username.value,
   })
-    .then((response) => {
-      console.log("HUI", response);
-    })
+    .then(() => {})
     .catch((error: AxiosError) => {
-      const errorData: SignUpModel = <SignUpModel>error.response?.data ?? {};
+      const errorData: SignUpModel = (error.response?.data ??
+        Object) as SignUpModel;
       if ("email" in errorData) {
         errorMessages.email = errorData.email[0];
       }
@@ -110,7 +103,7 @@ function signup() {
       if ("username" in errorData) {
         errorMessages.username = errorData.username[0];
       }
-      console.log(errorData);
+      console.error(errorData);
     })
     .finally(() => {
       isLoading.value = false;

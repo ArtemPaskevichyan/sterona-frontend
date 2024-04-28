@@ -1,3 +1,5 @@
+import type { Member } from "@/shared/types/team";
+
 export type TeamInlineCirclesProps = {
   /**
    * Numbers of members shown. Circle with 'expand' will also be shown.
@@ -9,11 +11,13 @@ export type TeamInlineCirclesProps = {
   members: Member[];
 };
 
-export type Member = {
-  id: number;
-  name: string;
-  role: string;
-  image: File;
+export type TeamInlineCirclesEmits = {
+  /**
+   * Calls when user click on ellipsis
+   * @param e - event name
+   * @param members - all members in this team list
+   */
+  (e: "extend", members: Member[]): void;
 };
 
 export const MockMembers: Member[] = [
