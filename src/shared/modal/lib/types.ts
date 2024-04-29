@@ -18,4 +18,9 @@ export type UIModalProps = {
    * Title in the modal header. Automatically renders cross button
    */
   title?: string;
+  /**
+   * Needs to turn off stopPropagation on modal content.
+   * Usually uses when there are elements, that adds "click" event listener on body, such as UIDropdown
+   */
+  dontStopClick?: boolean;
 };

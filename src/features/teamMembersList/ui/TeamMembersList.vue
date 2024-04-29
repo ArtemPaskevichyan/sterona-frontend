@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import TeamMembersListItem from "./TeamMembersListItem.vue";
-import type { TeamMemberListProps } from "../lib/types";
+import type { TeamMembersListProps } from "../lib/types";
 
-defineProps<TeamMemberListProps>();
+defineProps<TeamMembersListProps>();
 </script>
 
 <template>

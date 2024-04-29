@@ -5,8 +5,8 @@ import { TeamInlineCircles, MockMembers } from "@/entities/team";
 import type { Member } from "@/shared/types/team";
 import { UIButton, UIButtonStates } from "@/shared/button";
 import { onMounted, ref } from "vue";
-import UIModal from "@/shared/modal/ui/UIModal.vue";
-import { TeamMembersList } from "@/features/teamMembersLis";
+import { TeamMembersListModal } from "@/features/teamMembersList";
+import { TaskStatuses } from "@/shared/types/task";
 
 const title = ref("Board Title");
 const boardMembers = ref<Member[]>(MockMembers);
@@ -120,40 +120,33 @@ onMounted(() => {
     </div>
     <div class="baseBoard__columns">
       <BaseBoardColumn
-        status="Todo"
+        :status="TaskStatuses.Todo"
         :tasks="todoTasks"
-        title="To-Do"
       />
       <BaseBoardColumn
-        status="InProgress"
+        :status="TaskStatuses.InProgress"
         :tasks="inProgressTasks"
-        title="In Progress"
       />
       <BaseBoardColumn
-        status="Blocked"
+        :status="TaskStatuses.Blocked"
         :tasks="blockedTasks"
-        title="Blocked"
       />
       <BaseBoardColumn
-        status="Done"
+        :status="TaskStatuses.Done"
         :tasks="doneTasks"
-        title="Done"
       />
     </div>
   </div>
-  <Teleport to="#modal">
-    <UIModal
-      v-model:is-opened="showModal"
-      title="Команда"
-      :close-on-click-outside="true"
-    >
-      <TeamMembersList :members="inModalMembers" />
-    </UIModal>
-  </Teleport>
+  <TeamMembersListModal
+    v-model:is-opened="showModal"
+    title="Команда"
+    :members="inModalMembers"
+  />
 </template>
 
 <style scoped lang="scss">
 .baseBoard {
+  translate: -1px 0;
   display: inline-block;
 
   &__header {

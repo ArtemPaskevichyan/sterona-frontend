@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import TeamMembersCheckboxList from "@/features/teamMembersLis/ui/TeamMembersCheckboxList.vue";
-import { SelectableMockMembers } from "@/features/teamMembersLis/lib/mocks";
+import TeamMembersCheckboxList from "@/features/teamMembersList/ui/TeamMembersCheckboxList.vue";
+import { SelectableMockMembers } from "@/features/teamMembersList/lib/mocks";
 
 const meta: Meta<typeof TeamMembersCheckboxList> = {
   component: TeamMembersCheckboxList,

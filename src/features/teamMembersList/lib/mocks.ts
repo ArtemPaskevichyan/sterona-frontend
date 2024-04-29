@@ -1,5 +1,5 @@
 import type { Member } from "@/shared/types/team";
-import type { SelectableMember } from "@/features/teamMembersLis/lib/types";
+import type { SelectableMember } from "@/features/teamMembersList/lib/types";
 
 export const MockTeamMember: Member = {
   id: 3,

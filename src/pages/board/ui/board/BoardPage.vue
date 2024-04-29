@@ -6,8 +6,4 @@ import BaseBoard from "@/widgets/board/ui/BaseBoard.vue";
   <BaseBoard />
 </template>
 
-<style scoped lang="scss">
-.baseBoard {
-  translate: -1px 0;
-}
-</style>
+<style scoped lang="scss"></style>

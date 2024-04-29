@@ -1,14 +1,10 @@
-import type { TaskModel } from "@/shared/types/task";
+import type { TaskModel, TaskStatus } from "@/shared/types/task";
 
 export type BaseBoardColumnProps = {
   /**
-   * Title in column header
+   * Status for tasks in this column. For example 'Done'. Sets colors and title of the column
    */
-  title: string;
-  /**
-   * Status code for tasks in this column. For example 'Done'
-   */
-  status: string;
+  status: TaskStatus;
   /**
    * Tasks in this column
    */

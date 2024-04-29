@@ -3,9 +3,14 @@ import type { UIModalProps, UIModalSlot } from "../lib/types";
 
 const isOpened = defineModel("isOpened", { type: Boolean, required: true });
 defineSlots<UIModalSlot>();
-withDefaults(defineProps<UIModalProps>(), {
+const props = withDefaults(defineProps<UIModalProps>(), {
   closeOnClickOutside: false,
+  dontStopClick: false,
 });
+
+function handleClick(e: Event) {
+  if (!props.dontStopClick) e.stopPropagation();
+}
 </script>
 
 <template>
@@ -21,7 +26,7 @@ withDefaults(defineProps<UIModalProps>(), {
     >
       <div
         class="modal__content"
-        @click.stop
+        @click="handleClick"
       >
         <div
           v-if="title"
@@ -68,6 +73,7 @@ withDefaults(defineProps<UIModalProps>(), {
     background-color: var(--default-background-color);
     padding: 20px 30px;
     box-sizing: border-box;
+    z-index: 1;
   }
 
   &__header {
@@ -80,15 +86,15 @@ withDefaults(defineProps<UIModalProps>(), {
     h3 {
       margin: 0;
       color: var(--text-black);
-      font-size: var(--large-font-style);
+      font-size: var(--large-font-size);
       flex-grow: 1;
     }
 
     button {
       all: unset;
-      width: 20px;
-      height: 20px;
-      padding: 5px;
+      width: 24px;
+      height: 24px;
+      padding: 6px;
       box-sizing: border-box;
       display: flex;
       align-items: center;
@@ -98,6 +104,7 @@ withDefaults(defineProps<UIModalProps>(), {
       cursor: pointer;
       margin-top: 5px;
       flex-shrink: 0;
+      transition: 0.3s background-color;
 
       &:hover {
         background-color: var(--element-light-gray);

@@ -2,12 +2,12 @@
 import TeamMembersListItem from "./TeamMembersListItem.vue";
 import { UICheckbox } from "@/shared/checkbox";
 import type {
-  TeamMemberCheckboxListProps,
-  TeamMemberCheckboxListEmits,
+  TeamMembersCheckboxListProps,
+  TeamMembersCheckboxListEmits,
 } from "../lib/types";
 
-defineProps<TeamMemberCheckboxListProps>();
-const emit = defineEmits<TeamMemberCheckboxListEmits>();
+defineProps<TeamMembersCheckboxListProps>();
+const emit = defineEmits<TeamMembersCheckboxListEmits>();
 </script>
 
 <template>

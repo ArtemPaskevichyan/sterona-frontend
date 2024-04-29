@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TaskModel } from "@/shared/types/task";
-import { StatusToColor } from "@/shared/types/task";
+import { TaskStatuses } from "@/shared/types/task";
 import { TeamInlineCircles } from "@/entities/team";
 import { UIProgressBarSlim } from "@/shared/progress";
 import { computed, ref } from "vue";
@@ -47,7 +47,7 @@ const progress = computed(() => {
 });
 const taskColor = computed(() => {
   // @ts-ignore
-  return StatusToColor[props.model.status].background ?? "--task-grey";
+  return TaskStatuses[props.model.status].background ?? "--task-grey";
 });
 </script>
 

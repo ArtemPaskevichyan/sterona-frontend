@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { UIListItem } from "@/shared/list";
 import type {
-  TeamMemberListItemProps,
-  TeamMemberListItemSlots,
+  TeamMembersListItemProps,
+  TeamMembersListItemSlots,
 } from "../lib/types";
 
-defineProps<TeamMemberListItemProps>();
-defineSlots<TeamMemberListItemSlots>();
+defineProps<TeamMembersListItemProps>();
+defineSlots<TeamMembersListItemSlots>();
 </script>
 
 <template>

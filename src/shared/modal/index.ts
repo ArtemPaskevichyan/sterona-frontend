@@ -1,2 +1,2 @@
-import UIModal from "@/features/modal/ui/UIModal.vue";
+import UIModal from "./ui/UIModal.vue";
 export { UIModal };

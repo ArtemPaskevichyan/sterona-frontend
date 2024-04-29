@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import TeamMembersList from "@/features/teamMembersLis/ui/TeamMembersList.vue";
+import TeamMembersList from "@/features/teamMembersList/ui/TeamMembersList.vue";
 import { MockMembers } from "../lib/mocks";
 
 const meta: Meta<typeof TeamMembersList> = {

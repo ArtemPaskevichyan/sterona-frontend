@@ -21,25 +21,41 @@ export type TaskModel = {
   members: Member[];
 };
 
-export const StatusToColor = {
+export type TaskStatus = {
+  background: string;
+  button: string;
+  text: string;
+  identifier: string;
+  title: String;
+};
+
+export const TaskStatuses: Record<string, TaskStatus> = {
   Todo: {
     background: "--task-pink",
     button: "--task-pink-button",
     text: "--task-pink-text",
+    identifier: "Todo",
+    title: "To-Do",
   },
   InProgress: {
     background: "--task-blue",
     button: "--task-blue-button",
     text: "--task-blue-text",
+    identifier: "InProgress",
+    title: "In Progress",
   },
   Blocked: {
     background: "--task-grey",
     button: "--task-grey-button",
     text: "--task-grey-text",
+    identifier: "Blocked",
+    title: "Blocked",
   },
   Done: {
     background: "--task-green",
     button: "--task-green-button",
     text: "--task-green-text",
+    identifier: "Done",
+    title: "Done",
   },
 };

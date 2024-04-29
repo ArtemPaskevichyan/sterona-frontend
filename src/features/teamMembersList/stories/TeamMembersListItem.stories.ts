@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/vue3";
-import TeamMembersListItem from "@/features/teamMembersLis/ui/TeamMembersListItem.vue";
-import { MockTeamMember } from "@/features/teamMembersLis/lib/mocks";
+import TeamMembersListItem from "@/features/teamMembersList/ui/TeamMembersListItem.vue";
+import { MockTeamMember } from "@/features/teamMembersList/lib/mocks";
 
 const meta: Meta<typeof TeamMembersListItem> = {
   title: "Features/TeamList/TeamMembersListItem",

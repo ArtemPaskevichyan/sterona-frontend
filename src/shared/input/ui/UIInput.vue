@@ -78,6 +78,10 @@ input {
   }
 }
 
+.input:has(input:focus) {
+  --accent-color: var(--theme-color);
+}
+
 input:not(:placeholder-shown) ~ .placeholder {
   transform: scale(0.65);
   bottom: 18px;

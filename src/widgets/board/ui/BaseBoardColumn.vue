@@ -1,25 +1,28 @@
 <script setup lang="ts">
 import type { BaseBoardColumnProps } from "../lib/types";
 import { BaseTask } from "@/entities/task";
-import { StatusToColor } from "@/entities/task";
-import { computed, onMounted, ref } from "vue";
+import { TaskStatuses } from "@/shared/types/task";
+import { onMounted, ref } from "vue";
 import type { Member } from "@/shared/types/team";
-import UIModal from "@/shared/modal/ui/UIModal.vue";
-import { TeamMembersList } from "@/features/teamMembersLis";
+import { TeamMembersListModal } from "@/features/teamMembersList";
+import { CreateTask } from "@/features/createTask";
 
 const props = defineProps<BaseBoardColumnProps>();
-const columnAccentColor = computed(() => {
-  // @ts-ignore
-  return StatusToColor[props.status].background ?? "--task-grey";
-});
+const columnAccentColor = props.status.background ?? "--task-grey";
+const statuses = Object.entries(TaskStatuses).map(([_, v]) => v);
 
 const isComponentLoaded = ref(false);
 
-const showModal = ref(false);
+const showMembersModal = ref(false);
 const inModalMembers = ref<Member[]>([]);
 function showTeam(members: Member[]) {
   inModalMembers.value = members;
-  showModal.value = true;
+  showMembersModal.value = true;
+}
+
+const showCreateTaskModal = ref(false);
+function showCreateTask() {
+  showCreateTaskModal.value = true;
 }
 
 onMounted(() => {
@@ -37,10 +40,11 @@ onMounted(() => {
     }"
   >
     <div class="baseBoardColumn__header">
-      <span class="baseBoardColumn__title">{{ props.title }}</span>
+      <span class="baseBoardColumn__title">{{ status.title }}</span>
       <button
         class="baseBoardColumn__addButton"
         title="Создать задачу"
+        @click="showCreateTask"
       >
         <svg
           width="10"
@@ -69,18 +73,17 @@ onMounted(() => {
       />
     </div>
   </div>
-  <teleport
-    v-if="isComponentLoaded"
-    to="#modal"
-  >
-    <UIModal
-      v-model:is-opened="showModal"
-      title="Исполнители"
-      :close-on-click-outside="true"
-    >
-      <TeamMembersList :members="inModalMembers" />
-    </UIModal>
-  </teleport>
+
+  <TeamMembersListModal
+    v-model:is-opened="showMembersModal"
+    :members="inModalMembers"
+    title="Исполнители"
+  />
+  <CreateTask
+    v-model:is-opened="showCreateTaskModal"
+    :status="status"
+    :statuses="statuses"
+  />
 </template>
 
 <style scoped lang="scss">
