@@ -1,4 +1,4 @@
-import type { TaskModel } from "@/shared/types/task";
+import { type TaskModel, TaskStatuses } from "@/shared/types/task";
 import { MockMembers } from "@/entities/team";
 import type { Member } from "@/shared/types/team";
 
@@ -9,7 +9,7 @@ export const MockTaskModel: TaskModel = {
     "Необходимо доработать страницу авторизации и добавить вход через Google и VK",
   name: "Доделать страницу авторизации",
   priority: 0,
-  status: "Todo",
+  status: TaskStatuses.Todo,
   members: MockMembers,
 };
 

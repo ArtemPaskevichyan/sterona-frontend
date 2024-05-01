@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UIDropdownSlots, UIDropdownProps } from "../lib/types";
-import { watch, nextTick } from "vue";
+import { watch } from "vue";
 const isOpened = defineModel("isOpened", { type: Boolean, required: true });
 withDefaults(defineProps<UIDropdownProps>(), { short: false });
 defineSlots<UIDropdownSlots>();
@@ -23,7 +23,7 @@ watch(isOpened, () => {
   <Transition name="fade">
     <div
       v-if="isOpened"
-      class="dropdown"
+      class="uiDropdown"
       :class="{ short: short }"
       @click.stop
     >
@@ -33,7 +33,7 @@ watch(isOpened, () => {
 </template>
 
 <style scoped lang="scss">
-.dropdown {
+.uiDropdown {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;

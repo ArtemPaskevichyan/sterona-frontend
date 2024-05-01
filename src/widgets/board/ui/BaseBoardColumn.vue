@@ -83,6 +83,7 @@ onMounted(() => {
     v-model:is-opened="showCreateTaskModal"
     :status="status"
     :statuses="statuses"
+    :possible-members="boardMembers"
   />
 </template>
 

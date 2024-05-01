@@ -11,12 +11,15 @@ const props = defineProps<TeamInlineCirclesProps>();
 const emit = defineEmits<TeamInlineCirclesEmits>();
 
 type MemberWithTooltip = Member & { tooltipShown: boolean };
-const memberWithTooltipsRaw: MemberWithTooltip[] = [];
-props.members.forEach((e) => {
-  memberWithTooltipsRaw.push({
-    ...e,
-    tooltipShown: false,
+const memberWithTooltipsRaw = computed<MemberWithTooltip[]>(() => {
+  let members: MemberWithTooltip[] = [];
+  props.members.forEach((e) => {
+    members.push({
+      ...e,
+      tooltipShown: false,
+    });
   });
+  return members;
 });
 const membersWithTooltips = reactive(memberWithTooltipsRaw);
 const isExpandTooltipShown = ref(false);
@@ -60,10 +63,9 @@ const membersHiddenLabel = computed(() => {
       </span>
     </TooltipWrapper>
     <TooltipWrapper
-      v-for="(member, index) in membersWithTooltips.slice(
-        0,
-        props.shownMembersCount,
-      )"
+      v-for="(member, index) in membersWithTooltips
+        .slice(0, props.shownMembersCount)
+        .reverse()"
       :key="member.id"
       :label="member.name"
       :show-tooltip="member.tooltipShown"

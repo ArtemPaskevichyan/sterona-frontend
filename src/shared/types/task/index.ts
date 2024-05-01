@@ -14,12 +14,14 @@ export type ResponseTaskModel = {
 export type TaskModel = {
   name: string;
   description: string;
-  status: string;
+  status: TaskStatus;
   priority: 0 | 1 | 2 | 3;
   creationDate: Date;
   closeDate: Date;
   members: Member[];
 };
+
+export type Task = TaskModel & { id: number };
 
 export type TaskStatus = {
   background: string;
@@ -29,7 +31,12 @@ export type TaskStatus = {
   title: String;
 };
 
-export const TaskStatuses: Record<string, TaskStatus> = {
+export const TaskStatuses: {
+  Todo: TaskStatus;
+  InProgress: TaskStatus;
+  Blocked: TaskStatus;
+  Done: TaskStatus;
+} = {
   Todo: {
     background: "--task-pink",
     button: "--task-pink-button",

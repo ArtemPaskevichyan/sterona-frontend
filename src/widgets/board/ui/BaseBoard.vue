@@ -11,25 +11,30 @@ import { TaskStatuses } from "@/shared/types/task";
 const title = ref("Board Title");
 const boardMembers = ref<Member[]>(MockMembers);
 
-const todoTasks = [MockTaskModel, MockTaskModel, MockTaskModel, MockTaskModel];
+const todoTasks = [
+  MockTaskModel,
+  MockTaskModel,
+  MockTaskModel,
+  MockTaskModel,
+].map((e) => ({ ...e, status: TaskStatuses.Todo }));
 const inProgressTasks = [
   MockTaskModel,
   MockTaskModel,
   MockTaskModel,
   MockTaskModel,
-].map((e) => ({ ...e, status: "InProgress" }));
+].map((e) => ({ ...e, status: TaskStatuses.InProgress }));
 const blockedTasks = [
   MockTaskModel,
   MockTaskModel,
   MockTaskModel,
   MockTaskModel,
-].map((e) => ({ ...e, status: "Blocked" }));
+].map((e) => ({ ...e, status: TaskStatuses.Blocked }));
 const doneTasks = [
   MockTaskModel,
   MockTaskModel,
   MockTaskModel,
   MockTaskModel,
-].map((e) => ({ ...e, status: "Done" }));
+].map((e) => ({ ...e, status: TaskStatuses.Done }));
 
 const isComponentLoaded = ref(false);
 
@@ -122,18 +127,22 @@ onMounted(() => {
       <BaseBoardColumn
         :status="TaskStatuses.Todo"
         :tasks="todoTasks"
+        :board-members="boardMembers"
       />
       <BaseBoardColumn
         :status="TaskStatuses.InProgress"
         :tasks="inProgressTasks"
+        :board-members="boardMembers"
       />
       <BaseBoardColumn
         :status="TaskStatuses.Blocked"
         :tasks="blockedTasks"
+        :board-members="boardMembers"
       />
       <BaseBoardColumn
         :status="TaskStatuses.Done"
         :tasks="doneTasks"
+        :board-members="boardMembers"
       />
     </div>
   </div>

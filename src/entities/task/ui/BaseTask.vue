@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { TaskModel } from "@/shared/types/task";
-import { TaskStatuses } from "@/shared/types/task";
 import { TeamInlineCircles } from "@/entities/team";
 import { UIProgressBarSlim } from "@/shared/progress";
 import { computed, ref } from "vue";
@@ -45,16 +44,14 @@ const progress = computed(() => {
       (props.model.closeDate.getTime() - props.model.creationDate.getTime()),
   );
 });
-const taskColor = computed(() => {
-  // @ts-ignore
-  return TaskStatuses[props.model.status].background ?? "--task-grey";
-});
 </script>
 
 <template>
   <div
     class="baseTask"
-    :style="{ '--task-color': `var(${taskColor})` }"
+    :style="{
+      '--task-color': `var(${model.status.background})`,
+    }"
   >
     <div class="baseTask__titleBlock">
       {{ model.name }}

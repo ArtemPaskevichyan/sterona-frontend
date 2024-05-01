@@ -74,6 +74,8 @@ function handleClick(e: Event) {
     padding: 20px 30px;
     box-sizing: border-box;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   &__header {

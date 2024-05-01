@@ -1,4 +1,5 @@
 import type { TaskModel, TaskStatus } from "@/shared/types/task";
+import type { Member } from "@/shared/types/team";
 
 export type BaseBoardColumnProps = {
   /**
@@ -9,4 +10,8 @@ export type BaseBoardColumnProps = {
    * Tasks in this column
    */
   tasks: TaskModel[];
+  /**
+   * The array of board members
+   */
+  boardMembers: Member[];
 };

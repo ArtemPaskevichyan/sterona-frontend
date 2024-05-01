@@ -36,11 +36,12 @@ textarea {
 
   &:focus {
     outline: none;
-    border-color: var(--theme-color);
+    --accent-color: var(--theme-color);
   }
 
   &::placeholder {
     color: var(--accent-color);
+    transition: 0.3s color;
   }
 }
 

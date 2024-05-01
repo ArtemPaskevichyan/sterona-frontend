@@ -2,7 +2,7 @@ export type UIRadioButtonProps = {
   /**
    * Label right to the button
    */
-  title: string;
+  title?: string;
   /**
    * v-model. Checked or not
    */
