@@ -16,8 +16,8 @@ export type TaskModel = {
   description: string;
   status: TaskStatus;
   priority: 0 | 1 | 2 | 3;
-  creationDate: Date;
-  closeDate: Date;
+  creationDate: number;
+  closeDate: number;
   members: Member[];
 };
 

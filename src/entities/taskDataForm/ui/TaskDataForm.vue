@@ -18,8 +18,8 @@ const model = defineModel<TaskModel>("model", { required: true });
 const props = defineProps<TaskDataFormProps>();
 const emit = defineEmits<TaskDataFormEmits>();
 
-const taskTitle = ref("");
-const taskDescription = ref("");
+const taskTitle = ref(model.value.name);
+const taskDescription = ref(model.value.description);
 
 type PickableStatus = TaskStatus & { picked: boolean };
 const pickableStatuses = ref<PickableStatus[]>(
@@ -48,18 +48,20 @@ for (let m of props.possibleMembers) {
     selected: taskMembersIdKeys[m.id] !== undefined,
   });
 }
-const selectableTaskMembers = ref<SelectableMember[]>(selectableMembersInitial);
+const selectableMembers = ref<SelectableMember[]>(selectableMembersInitial);
 const isTaskMembersPickOpened = ref(false);
 function updateTaskMembers(member: SelectableMember) {
   let taskMembers: Member[] = [];
-  for (let m of selectableTaskMembers.value) {
+  for (let m of selectableMembers.value) {
     if (m.id == member.id) m.selected = member.selected;
     if (m.selected) taskMembers.push(m);
   }
   model.value.members = taskMembers;
 }
 
-const taskStartFormattedDate = ref("");
+const taskStartFormattedDate = ref(
+  new Date(model.value.creationDate).toLocaleDateString(),
+);
 const isTaskStartDatePickOpened = ref(false);
 function updateStartDate({
   date,
@@ -68,11 +70,17 @@ function updateStartDate({
   date: Date;
   formattedDate: string;
 }) {
-  model.value.creationDate = date;
+  if (!date) {
+    taskStartFormattedDate.value = "";
+    return;
+  }
+  model.value.creationDate = date.getTime();
   taskStartFormattedDate.value = formattedDate;
 }
 
-const taskEndFormattedDate = ref("");
+const taskEndFormattedDate = ref(
+  new Date(model.value.closeDate).toLocaleDateString(),
+);
 const isTaskEndDatePickOpened = ref(false);
 function updateEndDate({
   date,
@@ -81,7 +89,11 @@ function updateEndDate({
   date: Date;
   formattedDate: string;
 }) {
-  model.value.closeDate = date;
+  if (!date) {
+    taskEndFormattedDate.value = "";
+    return;
+  }
+  model.value.closeDate = date.getTime();
   taskEndFormattedDate.value = formattedDate;
 }
 
@@ -218,7 +230,7 @@ watch(isTaskEndDatePickOpened, () => {
       </div>
       <UIDropdown v-model:is-opened="isTaskMembersPickOpened">
         <TeamMembersCheckboxList
-          :members="selectableTaskMembers"
+          :members="selectableMembers"
           @updated="updateTaskMembers"
         />
       </UIDropdown>

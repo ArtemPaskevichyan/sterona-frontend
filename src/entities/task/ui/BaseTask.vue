@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import type { TaskModel } from "@/shared/types/task";
+import type { Task } from "@/shared/types/task";
 import { TeamInlineCircles } from "@/entities/team";
 import { UIProgressBarSlim } from "@/shared/progress";
 import { computed, ref } from "vue";
 import { TooltipWrapper } from "@/shared/tooltip";
 import type { BaseTaskEmits } from "../lib/types";
 
-const props = defineProps<{ model: TaskModel }>();
+const props = defineProps<{ model: Task }>();
 const emit = defineEmits<BaseTaskEmits>();
 
 const showProgressBarTooltip = ref(false);
 
 const daysLeft = computed(() => {
   return Math.ceil(
-    (props.model.closeDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    (props.model.closeDate - Date.now()) / (1000 * 60 * 60 * 24),
   );
 });
 const daysLeftLabel = computed(() => {
@@ -40,10 +40,14 @@ const daysLeftLabel = computed(() => {
 const progress = computed(() => {
   return Math.min(
     1,
-    (Date.now() - props.model.creationDate.getTime()) /
-      (props.model.closeDate.getTime() - props.model.creationDate.getTime()),
+    (Date.now() - props.model.creationDate) /
+      (props.model.closeDate - props.model.creationDate),
   );
 });
+
+function onDragStart(event: DragEvent) {
+  event.dataTransfer?.setData("taskModel", JSON.stringify(props.model));
+}
 </script>
 
 <template>
@@ -52,6 +56,8 @@ const progress = computed(() => {
     :style="{
       '--task-color': `var(${model.status.background})`,
     }"
+    draggable="true"
+    @dragstart="onDragStart"
   >
     <div class="baseTask__titleBlock">
       {{ model.name }}
@@ -91,6 +97,7 @@ const progress = computed(() => {
   border-radius: 6px;
   border-left: 6px solid var(--task-color);
   color: var(--text-black);
+  background-color: var(--default-background-color);
 
   &__titleBlock {
     font-size: var(--default-font-size);

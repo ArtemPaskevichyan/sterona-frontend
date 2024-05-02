@@ -20,6 +20,7 @@ const calendarOptions: AirDatepickerOptions = {
       : formattedDate;
     emit("selected", { date, formattedDate });
   },
+  toggleSelected: false,
 };
 
 let calendarInstance: AirDatepicker | undefined;

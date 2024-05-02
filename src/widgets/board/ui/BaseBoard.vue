@@ -4,37 +4,40 @@ import { MockTaskModel } from "@/entities/task";
 import { TeamInlineCircles, MockMembers } from "@/entities/team";
 import type { Member } from "@/shared/types/team";
 import { UIButton, UIButtonStates } from "@/shared/button";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive, watch } from "vue";
 import { TeamMembersListModal } from "@/features/teamMembersList";
-import { TaskStatuses } from "@/shared/types/task";
+import { type Task, type TaskStatus, TaskStatuses } from "@/shared/types/task";
 
 const title = ref("Board Title");
 const boardMembers = ref<Member[]>(MockMembers);
 
-const todoTasks = [
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-].map((e) => ({ ...e, status: TaskStatuses.Todo }));
-const inProgressTasks = [
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-].map((e) => ({ ...e, status: TaskStatuses.InProgress }));
-const blockedTasks = [
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-].map((e) => ({ ...e, status: TaskStatuses.Blocked }));
-const doneTasks = [
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-  MockTaskModel,
-].map((e) => ({ ...e, status: TaskStatuses.Done }));
+let taskIdGenerator = 0;
+const boardModel = reactive<{ [key: string]: Task[] }>({
+  Todo: [MockTaskModel, MockTaskModel, MockTaskModel, MockTaskModel].map(
+    (e) => ({
+      ...e,
+      status: TaskStatuses.Todo,
+      id: ++taskIdGenerator,
+    }),
+  ),
+  InProgress: [MockTaskModel, MockTaskModel].map((e) => ({
+    ...e,
+    status: TaskStatuses.InProgress,
+    id: ++taskIdGenerator,
+  })),
+  Blocked: [MockTaskModel].map((e) => ({
+    ...e,
+    status: TaskStatuses.Blocked,
+    id: ++taskIdGenerator,
+  })),
+  Done: [MockTaskModel, MockTaskModel, MockTaskModel, MockTaskModel].map(
+    (e) => ({
+      ...e,
+      status: TaskStatuses.Done,
+      id: ++taskIdGenerator,
+    }),
+  ),
+});
 
 const isComponentLoaded = ref(false);
 
@@ -43,6 +46,37 @@ const inModalMembers = ref<Member[]>([]);
 function showTeam(members: Member[]) {
   inModalMembers.value = members;
   showModal.value = true;
+}
+
+function getTaskById(taskId: number): Task | null {
+  for (let taskCollection of Object.values(boardModel)) {
+    for (let t of taskCollection) {
+      if (t.id === taskId) return t;
+    }
+  }
+  return null;
+}
+
+function handleTaskDropped(status: TaskStatus, task: Task) {
+  for (let taskCollection of Object.values(boardModel)) {
+    for (let i in taskCollection) {
+      if (taskCollection[i].id === task.id) {
+        taskCollection.splice(parseInt(i), 1);
+      }
+    }
+  }
+  task.status = status;
+  boardModel[status.identifier].push(task);
+}
+
+function updateTask(updatedTask: Task) {
+  let task = getTaskById(updatedTask.id);
+  if (task === null) return;
+  for (let k of Object.keys(task)) {
+    //@ts-ignore
+    task[k] = updatedTask[k];
+  }
+  console.log(boardModel);
 }
 
 onMounted(() => {
@@ -126,23 +160,39 @@ onMounted(() => {
     <div class="baseBoard__columns">
       <BaseBoardColumn
         :status="TaskStatuses.Todo"
-        :tasks="todoTasks"
+        :tasks="boardModel.Todo"
         :board-members="boardMembers"
+        @task-dropped="
+          (task: Task) => handleTaskDropped(TaskStatuses.Todo, task)
+        "
+        @task-updated="updateTask"
       />
       <BaseBoardColumn
         :status="TaskStatuses.InProgress"
-        :tasks="inProgressTasks"
+        :tasks="boardModel.InProgress"
         :board-members="boardMembers"
+        @task-dropped="
+          (task: Task) => handleTaskDropped(TaskStatuses.InProgress, task)
+        "
+        @task-updated="updateTask"
       />
       <BaseBoardColumn
         :status="TaskStatuses.Blocked"
-        :tasks="blockedTasks"
+        :tasks="boardModel.Blocked"
         :board-members="boardMembers"
+        @task-dropped="
+          (task: Task) => handleTaskDropped(TaskStatuses.Blocked, task)
+        "
+        @task-updated="updateTask"
       />
       <BaseBoardColumn
         :status="TaskStatuses.Done"
-        :tasks="doneTasks"
+        :tasks="boardModel.Done"
         :board-members="boardMembers"
+        @task-dropped="
+          (task: Task) => handleTaskDropped(TaskStatuses.Done, task)
+        "
+        @task-updated="updateTask"
       />
     </div>
   </div>

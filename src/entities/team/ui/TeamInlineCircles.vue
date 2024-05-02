@@ -5,24 +5,25 @@ import type {
   TeamInlineCirclesProps,
 } from "../lib/types";
 import { TooltipWrapper } from "@/shared/tooltip";
-import { computed, reactive, ref } from "vue";
+import { computed, watch, ref, reactive } from "vue";
 
 const props = defineProps<TeamInlineCirclesProps>();
 const emit = defineEmits<TeamInlineCirclesEmits>();
 
-type MemberWithTooltip = Member & { tooltipShown: boolean };
-const memberWithTooltipsRaw = computed<MemberWithTooltip[]>(() => {
-  let members: MemberWithTooltip[] = [];
-  props.members.forEach((e) => {
-    members.push({
-      ...e,
-      tooltipShown: false,
-    });
-  });
-  return members;
-});
-const membersWithTooltips = reactive(memberWithTooltipsRaw);
 const isExpandTooltipShown = ref(false);
+type MemberWithTooltip = Member & { tooltipShown?: boolean };
+const membersWithTooltips = ref<MemberWithTooltip[]>([]);
+const membersRaw = computed(() => {
+  updateTooltipsArray();
+  return props.members;
+});
+const members = ref(membersRaw);
+function updateTooltipsArray() {
+  membersWithTooltips.value = props.members.map((e) => ({
+    ...e,
+    tooltipShown: false,
+  }));
+}
 
 const membersHidden = computed(() => {
   return props.members.length - props.shownMembersCount;
@@ -63,14 +64,14 @@ const membersHiddenLabel = computed(() => {
       </span>
     </TooltipWrapper>
     <TooltipWrapper
-      v-for="(member, index) in membersWithTooltips
+      v-for="(member, index) in members
         .slice(0, props.shownMembersCount)
         .reverse()"
       :key="member.id"
       :label="member.name"
-      :show-tooltip="member.tooltipShown"
-      @mouseenter="member.tooltipShown = true"
-      @mouseleave="member.tooltipShown = false"
+      :show-tooltip="membersWithTooltips[index]?.tooltipShown ?? false"
+      @mouseenter="membersWithTooltips[index].tooltipShown = true"
+      @mouseleave="membersWithTooltips[index].tooltipShown = false"
     >
       <span
         class="teamInlineCircles__circle"

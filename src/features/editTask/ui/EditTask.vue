@@ -1,32 +1,23 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import type { CreateTaskProps } from "../lib/types";
-import type { TaskModel } from "@/shared/types/task";
-import { UIButton, UIButtonStates } from "@/shared/button";
 import { TaskDataForm } from "@/entities/taskDataForm";
+import { UIButton, UIButtonStates } from "@/shared/button";
 import { UIModal } from "@/shared/modal";
+import type { EditTaskProps, EditTaskEmits } from "../lib/type";
+import { onMounted, ref, watch } from "vue";
+import type { Task } from "@/shared/types/task";
 
 const isOpened = defineModel("isOpened", { type: Boolean, required: true });
-const props = defineProps<CreateTaskProps>();
+const props = defineProps<EditTaskProps>();
+const emit = defineEmits<EditTaskEmits>();
 
 const isLoaded = ref(false);
 onMounted(() => {
   isLoaded.value = true;
 });
 
-const taskTemplate: TaskModel = {
-  closeDate: Date.now() + 1000 * 60 * 60 * 24,
-  creationDate: Date.now(),
-  description: "",
-  members: [],
-  name: "",
-  priority: 0,
-  status: props.status,
-};
-const newTask = ref<TaskModel>({ ...taskTemplate });
+const targetTask = ref<Task>({ ...props.task });
 
 const dontStopClickOnModal = ref(false);
-
 function updateStopClick(value: boolean) {
   dontStopClickOnModal.value = value;
 }
@@ -36,19 +27,16 @@ function setValidation(v: () => boolean) {
   validation = v;
 }
 
-function saveTask() {
+function applyChanges() {
   if (validation === undefined) return;
   if (!validation()) return;
+  emit("updated", targetTask.value);
   isOpened.value = false;
 }
 
 watch(isOpened, () => {
   if (isOpened.value === true) {
-    newTask.value = {
-      ...taskTemplate,
-      creationDate: Date.now(),
-      closeDate: Date.now() + 1000 * 60 * 60 * 24,
-    };
+    targetTask.value = { ...props.task };
   }
 });
 </script>
@@ -66,7 +54,7 @@ watch(isOpened, () => {
       <div class="createTask__content">
         <TaskDataForm
           v-if="isOpened"
-          v-model:model="newTask"
+          v-model:model="targetTask"
           class="createTask__form"
           :statuses="statuses"
           :possible-members="possibleMembers"
@@ -76,9 +64,9 @@ watch(isOpened, () => {
         <UIButton
           class="createTask__createButton"
           :type="UIButtonStates.Primary"
-          @click="saveTask"
+          @click="applyChanges"
         >
-          Создать
+          Сохранить
         </UIButton>
       </div>
     </UIModal>

@@ -1,17 +1,38 @@
 <script setup lang="ts">
-import type { BaseBoardColumnProps } from "../lib/types";
+import type { BaseBoardColumnEmits, BaseBoardColumnProps } from "../lib/types";
 import { BaseTask } from "@/entities/task";
-import { TaskStatuses } from "@/shared/types/task";
+import { TaskStatuses, type Task } from "@/shared/types/task";
 import { onMounted, ref } from "vue";
 import type { Member } from "@/shared/types/team";
 import { TeamMembersListModal } from "@/features/teamMembersList";
 import { CreateTask } from "@/features/createTask";
+import { EditTask } from "@/features/editTask";
 
 const props = defineProps<BaseBoardColumnProps>();
+const emit = defineEmits<BaseBoardColumnEmits>();
 const columnAccentColor = props.status.background ?? "--task-grey";
 const statuses = Object.entries(TaskStatuses).map(([_, v]) => v);
 
 const isComponentLoaded = ref(false);
+const hasDragOver = ref(false);
+
+function handleTaskDragOver(event: DragEvent) {
+  event.preventDefault();
+  hasDragOver.value = true;
+}
+
+function handleTaskDragLeave() {
+  hasDragOver.value = false;
+}
+
+function handleTaskDrop(event: DragEvent) {
+  event.preventDefault();
+  hasDragOver.value = false;
+  const passedTaskJSON = event.dataTransfer?.getData("taskModel");
+  if (!passedTaskJSON) return;
+  const task: Task = JSON.parse(passedTaskJSON);
+  emit("taskDropped", task);
+}
 
 const showMembersModal = ref(false);
 const inModalMembers = ref<Member[]>([]);
@@ -23,6 +44,13 @@ function showTeam(members: Member[]) {
 const showCreateTaskModal = ref(false);
 function showCreateTask() {
   showCreateTaskModal.value = true;
+}
+
+const showEditTaskModal = ref(false);
+const editingTask = ref<Task | undefined>(undefined);
+function showEditTask(task: Task) {
+  editingTask.value = task;
+  showEditTaskModal.value = true;
 }
 
 onMounted(() => {
@@ -38,6 +66,9 @@ onMounted(() => {
       '--button-accent-color': `var(${columnAccentColor}-button)`,
       '--text-accent-color': `var(${columnAccentColor}-text)`,
     }"
+    @dragover="handleTaskDragOver"
+    @dragleave="handleTaskDragLeave"
+    @drop="handleTaskDrop"
   >
     <div class="baseBoardColumn__header">
       <span class="baseBoardColumn__title">{{ status.title }}</span>
@@ -70,7 +101,14 @@ onMounted(() => {
         :key="index"
         :model="task"
         @showTeam="showTeam"
+        @click="showEditTask(task)"
       />
+    </div>
+    <div
+      v-if="hasDragOver"
+      class="baseBoardColumn__dragSheet"
+    >
+      Отпустите, чтобы переместить задачу
     </div>
   </div>
 
@@ -85,6 +123,13 @@ onMounted(() => {
     :statuses="statuses"
     :possible-members="boardMembers"
   />
+  <EditTask
+    v-model:is-opened="showEditTaskModal"
+    :task="editingTask!"
+    :statuses="statuses"
+    :possible-members="boardMembers"
+    @updated="(task: Task) => emit('taskUpdated', task)"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -96,6 +141,8 @@ onMounted(() => {
   --button-accent-color: var(--task-grey);
   --text-accent-color: var(--task-grey);
   border: 1px solid var(--element-gray);
+  box-sizing: border-box;
+  position: relative;
 
   &:not(:last-child) {
     border-right: none;
@@ -135,6 +182,25 @@ onMounted(() => {
     .baseTask:not(:first-child) {
       margin-top: 10px;
     }
+  }
+
+  &__dragSheet {
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+    right: 2px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px dashed var(--theme-color);
+    box-sizing: border-box;
+    position: absolute;
+    color: var(--theme-color);
+    display: flex;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    font-size: var(--small-font-size);
+    border-radius: 6px;
+    pointer-events: none;
   }
 }
 </style>

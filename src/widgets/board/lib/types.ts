@@ -1,4 +1,4 @@
-import type { TaskModel, TaskStatus } from "@/shared/types/task";
+import type { Task, TaskStatus } from "@/shared/types/task";
 import type { Member } from "@/shared/types/team";
 
 export type BaseBoardColumnProps = {
@@ -9,9 +9,24 @@ export type BaseBoardColumnProps = {
   /**
    * Tasks in this column
    */
-  tasks: TaskModel[];
+  tasks: Task[];
   /**
    * The array of board members
    */
   boardMembers: Member[];
+};
+
+export type BaseBoardColumnEmits = {
+  /**
+   * Emits when user dropped task on the column
+   * @param e – name of emit
+   * @param task – dragged task
+   */
+  (e: "taskDropped", task: Task): void;
+  /**
+   * Emits when user updated task
+   * @param e – name of emit
+   * @param task – updated task
+   */
+  (e: "taskUpdated", task: Task): void;
 };
