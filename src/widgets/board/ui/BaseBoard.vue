@@ -57,7 +57,7 @@ function getTaskById(taskId: number): Task | null {
   return null;
 }
 
-function handleTaskDropped(status: TaskStatus, task: Task) {
+function changeTaskStatus(task: Task, status: TaskStatus) {
   for (let taskCollection of Object.values(boardModel)) {
     for (let i in taskCollection) {
       if (taskCollection[i].id === task.id) {
@@ -72,11 +72,15 @@ function handleTaskDropped(status: TaskStatus, task: Task) {
 function updateTask(updatedTask: Task) {
   let task = getTaskById(updatedTask.id);
   if (task === null) return;
-  for (let k of Object.keys(task)) {
+  let statusChanged = false;
+
+  for (let key of Object.keys(task)) {
+    if (key === "status") statusChanged = true;
     //@ts-ignore
-    task[k] = updatedTask[k];
+    task[key] = updatedTask[key];
   }
-  console.log(boardModel);
+
+  if (statusChanged) changeTaskStatus(task, task.status);
 }
 
 onMounted(() => {
@@ -159,39 +163,12 @@ onMounted(() => {
     </div>
     <div class="baseBoard__columns">
       <BaseBoardColumn
-        :status="TaskStatuses.Todo"
-        :tasks="boardModel.Todo"
+        v-for="status in TaskStatuses"
+        :key="status.identifier"
+        :status="status"
+        :tasks="boardModel[status.identifier]"
         :board-members="boardMembers"
-        @task-dropped="
-          (task: Task) => handleTaskDropped(TaskStatuses.Todo, task)
-        "
-        @task-updated="updateTask"
-      />
-      <BaseBoardColumn
-        :status="TaskStatuses.InProgress"
-        :tasks="boardModel.InProgress"
-        :board-members="boardMembers"
-        @task-dropped="
-          (task: Task) => handleTaskDropped(TaskStatuses.InProgress, task)
-        "
-        @task-updated="updateTask"
-      />
-      <BaseBoardColumn
-        :status="TaskStatuses.Blocked"
-        :tasks="boardModel.Blocked"
-        :board-members="boardMembers"
-        @task-dropped="
-          (task: Task) => handleTaskDropped(TaskStatuses.Blocked, task)
-        "
-        @task-updated="updateTask"
-      />
-      <BaseBoardColumn
-        :status="TaskStatuses.Done"
-        :tasks="boardModel.Done"
-        :board-members="boardMembers"
-        @task-dropped="
-          (task: Task) => handleTaskDropped(TaskStatuses.Done, task)
-        "
+        @task-dropped="(task: Task) => changeTaskStatus(task, status)"
         @task-updated="updateTask"
       />
     </div>

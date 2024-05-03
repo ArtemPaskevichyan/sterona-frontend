@@ -67,6 +67,7 @@ function onDragStart(event: DragEvent) {
         :members="props.model.members"
         :shown-members-count="3"
         class="baseTask__team"
+        @click.stop
         @extend="emit('showTeam', model.members)"
       />
       <TooltipWrapper

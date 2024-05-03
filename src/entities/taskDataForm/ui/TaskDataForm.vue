@@ -18,8 +18,7 @@ const model = defineModel<TaskModel>("model", { required: true });
 const props = defineProps<TaskDataFormProps>();
 const emit = defineEmits<TaskDataFormEmits>();
 
-const taskTitle = ref(model.value.name);
-const taskDescription = ref(model.value.description);
+const taskTitleErrorMessage = ref("");
 
 type PickableStatus = TaskStatus & { picked: boolean };
 const pickableStatuses = ref<PickableStatus[]>(
@@ -97,20 +96,14 @@ function updateEndDate({
   taskEndFormattedDate.value = formattedDate;
 }
 
-const taskTitleErrorMessage = ref("");
-
 function validate(): boolean {
-  if (taskTitle.value.length == 0) {
+  if (model.value.name.length == 0) {
     taskTitleErrorMessage.value = "Нужно ввести название";
     return false;
   }
   return true;
 }
 emit("providedValidationCallback", validate);
-
-watch(taskTitle, () => {
-  taskTitleErrorMessage.value = "";
-});
 
 watch(isTaskStatusPickOpened, () => {
   if (isTaskStatusPickOpened.value === true) {
@@ -164,14 +157,14 @@ watch(isTaskEndDatePickOpened, () => {
 <template>
   <div>
     <UIInput
-      v-model:value="taskTitle"
+      v-model:value="model.name"
       :placeholder="
         taskTitleErrorMessage ? taskTitleErrorMessage : 'Название задачи'
       "
       :error="!!taskTitleErrorMessage"
     />
     <UITextarea
-      v-model:value="taskDescription"
+      v-model:value="model.description"
       :placeholder="'Описание задачи'"
     ></UITextarea>
     <div class="taskDataForm__paramDropdownHolder">

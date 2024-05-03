@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { BaseBoardColumnEmits, BaseBoardColumnProps } from "../lib/types";
-import { BaseTask } from "@/entities/task";
+import { BaseTask, MockTaskModel } from "@/entities/task";
 import { TaskStatuses, type Task } from "@/shared/types/task";
 import { onMounted, ref } from "vue";
 import type { Member } from "@/shared/types/team";
@@ -47,7 +47,7 @@ function showCreateTask() {
 }
 
 const showEditTaskModal = ref(false);
-const editingTask = ref<Task | undefined>(undefined);
+const editingTask = ref<Task>({ ...MockTaskModel, id: 0 });
 function showEditTask(task: Task) {
   editingTask.value = task;
   showEditTaskModal.value = true;
@@ -125,7 +125,7 @@ onMounted(() => {
   />
   <EditTask
     v-model:is-opened="showEditTaskModal"
-    :task="editingTask!"
+    :task="editingTask"
     :statuses="statuses"
     :possible-members="boardMembers"
     @updated="(task: Task) => emit('taskUpdated', task)"
