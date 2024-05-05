@@ -1,4 +1,4 @@
-import type { Task, TaskStatus } from "@/shared/types/task";
+import type { Task, TaskModel, TaskStatus } from "@/shared/types/task";
 import type { Member } from "@/shared/types/team";
 
 export type BaseBoardColumnProps = {
@@ -29,4 +29,10 @@ export type BaseBoardColumnEmits = {
    * @param task – updated task
    */
   (e: "taskUpdated", task: Task): void;
+  /**
+   * Emits when user adds a task
+   * @param e – name of emit
+   * @param task – new instance of task
+   */
+  (e: "taskCreated", task: TaskModel): void;
 };

@@ -22,27 +22,27 @@ export type TeamInlineCirclesEmits = {
 
 export const MockMembers: Member[] = [
   {
-    id: 0,
-    image: new File([], "image.png"),
-    name: "Arsenix",
-    role: "Developer",
-  },
-  {
     id: 1,
-    image: new File([], "image.png"),
-    name: "Gslayer",
+    // image: new File([], "image.png"),
+    name: "Arseniks",
     role: "Developer",
   },
   {
     id: 2,
-    image: new File([], "image.png"),
-    name: "Temi4",
+    // image: new File([], "image.png"),
+    name: "Gslayer",
     role: "Developer",
   },
   {
     id: 3,
-    image: new File([], "image.png"),
-    name: "Maria",
+    // image: new File([], "image.png"),
+    name: "Temi4",
+    role: "Developer",
+  },
+  {
+    id: 4,
+    // image: new File([], "image.png"),
+    name: "Marina",
     role: "TeamLead",
   },
 ];

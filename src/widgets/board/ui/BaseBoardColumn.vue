@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BaseBoardColumnEmits, BaseBoardColumnProps } from "../lib/types";
 import { BaseTask, MockTaskModel } from "@/entities/task";
-import { TaskStatuses, type Task } from "@/shared/types/task";
+import { TaskStatuses, type Task, type TaskModel } from "@/shared/types/task";
 import { onMounted, ref } from "vue";
 import type { Member } from "@/shared/types/team";
 import { TeamMembersListModal } from "@/features/teamMembersList";
@@ -122,6 +122,7 @@ onMounted(() => {
     :status="status"
     :statuses="statuses"
     :possible-members="boardMembers"
+    @created="(task: TaskModel) => emit('taskCreated', task)"
   />
   <EditTask
     v-model:is-opened="showEditTaskModal"

@@ -1,42 +1,75 @@
 <script setup lang="ts">
-import BaseBoardColumn from "./BaseBoardColumn.vue";
-import { MockTaskModel } from "@/entities/task";
-import { TeamInlineCircles, MockMembers } from "@/entities/team";
-import type { Member } from "@/shared/types/team";
-import { UIButton, UIButtonStates } from "@/shared/button";
-import { onMounted, ref, reactive, watch } from "vue";
-import { TeamMembersListModal } from "@/features/teamMembersList";
-import { type Task, type TaskStatus, TaskStatuses } from "@/shared/types/task";
+import { onMounted, ref, reactive } from "vue";
 
-const title = ref("Board Title");
+import BaseBoardColumn from "./BaseBoardColumn.vue";
+import { TeamInlineCircles, MockMembers } from "@/entities/team";
+import { UIButton, UIButtonStates } from "@/shared/button";
+import { TeamMembersListModal } from "@/features/teamMembersList";
+
+import {
+  type Task,
+  type TaskModel,
+  type TaskStatus,
+  TaskStatuses,
+} from "@/shared/types/task";
+import type { Member } from "@/shared/types/team";
+
+import { BoardWebSocketProvider } from "@/widgets/board/api/webSockets";
+import {
+  type BoardJSON,
+  parseJSONBoard,
+  parseJSONTask,
+  type TaskJSON,
+  taskModelToJSON,
+} from "@/shared/types/serverJSON";
+import { taskToJSON } from "@/shared/types/serverJSON";
+import type { BoardParameters } from "@/shared/types/board";
+
+const boardParameters = reactive<BoardParameters>({ id: 1, name: "" });
 const boardMembers = ref<Member[]>(MockMembers);
 
-let taskIdGenerator = 0;
+const addTaskHandler = (taskJSON: TaskJSON) => {
+  const task = parseJSONTask(taskJSON);
+  console.log(task);
+  boardModel[task.status.identifier].push(task);
+};
+
+const getTasksHandler = (tasksJSON: { tasks: TaskJSON[] }) => {
+  for (let taskJSON of tasksJSON.tasks) {
+    addTaskHandler(taskJSON);
+  }
+};
+
+const updateBoardHandler = (boardData: BoardJSON) => {
+  const parsedBoard = parseJSONBoard(boardData);
+  for (let k in boardParameters) {
+    //@ts-ignore
+    boardParameters[k] = parsedBoard[k];
+  }
+};
+
+const updateTaskHandler = (taskJSON: TaskJSON) => {
+  const task = parseJSONTask(taskJSON);
+  updateTask(task);
+};
+
+const socketProvider = new BoardWebSocketProvider({
+  boardId: 1,
+  onReceive: {
+    "add.task": addTaskHandler,
+    "hello.board": updateBoardHandler,
+    "delete.task": undefined,
+    "hello.tasks": getTasksHandler,
+    "update.board": updateBoardHandler,
+    "update.task": updateTaskHandler,
+  },
+});
+
 const boardModel = reactive<{ [key: string]: Task[] }>({
-  Todo: [MockTaskModel, MockTaskModel, MockTaskModel, MockTaskModel].map(
-    (e) => ({
-      ...e,
-      status: TaskStatuses.Todo,
-      id: ++taskIdGenerator,
-    }),
-  ),
-  InProgress: [MockTaskModel, MockTaskModel].map((e) => ({
-    ...e,
-    status: TaskStatuses.InProgress,
-    id: ++taskIdGenerator,
-  })),
-  Blocked: [MockTaskModel].map((e) => ({
-    ...e,
-    status: TaskStatuses.Blocked,
-    id: ++taskIdGenerator,
-  })),
-  Done: [MockTaskModel, MockTaskModel, MockTaskModel, MockTaskModel].map(
-    (e) => ({
-      ...e,
-      status: TaskStatuses.Done,
-      id: ++taskIdGenerator,
-    }),
-  ),
+  Todo: [],
+  InProgress: [],
+  Blocked: [],
+  Done: [],
 });
 
 const isComponentLoaded = ref(false);
@@ -83,6 +116,14 @@ function updateTask(updatedTask: Task) {
   if (statusChanged) changeTaskStatus(task, task.status);
 }
 
+function sendAddTask(task: TaskModel) {
+  socketProvider.addTask(taskModelToJSON(task));
+}
+
+function sendTaskUpdate(task: Task) {
+  socketProvider.updateTask(taskToJSON(task));
+}
+
 onMounted(() => {
   isComponentLoaded.value = true;
 });
@@ -91,7 +132,7 @@ onMounted(() => {
 <template>
   <div class="baseBoard">
     <div class="baseBoard__header">
-      <span class="baseBoard__title">{{ title }}</span>
+      <span class="baseBoard__title">{{ boardParameters.name }}</span>
       <div class="baseBoard__controls">
         <TeamInlineCircles
           :members="boardMembers"
@@ -168,8 +209,9 @@ onMounted(() => {
         :status="status"
         :tasks="boardModel[status.identifier]"
         :board-members="boardMembers"
-        @task-dropped="(task: Task) => changeTaskStatus(task, status)"
-        @task-updated="updateTask"
+        @task-dropped="(task: Task) => sendTaskUpdate({ ...task, status })"
+        @task-updated="sendTaskUpdate"
+        @task-created="sendAddTask"
       />
     </div>
   </div>

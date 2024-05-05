@@ -27,7 +27,7 @@ defineProps<UIProgressBarSlimProps>();
   &__fill {
     height: 100%;
     border-radius: 2px;
-    width: calc(100% * var(--value));
+    width: min(calc(100% * var(--value)), 100%);
     background-color: var(--fill-color);
   }
 
