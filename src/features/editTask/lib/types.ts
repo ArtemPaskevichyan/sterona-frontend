@@ -27,4 +27,10 @@ export type EditTaskEmits = {
    * @param task – new instance of task
    */
   (e: "updated", task: Task): void;
+  /**
+   * Emits when user deletes task
+   * @param e – name of emit
+   * @param taskId – id of deleting task
+   */
+  (e: "deleted", taskId: number): void;
 };

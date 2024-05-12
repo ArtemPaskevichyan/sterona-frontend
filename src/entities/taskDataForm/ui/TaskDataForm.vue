@@ -73,7 +73,8 @@ function updateStartDate({
     taskStartFormattedDate.value = "";
     return;
   }
-  model.value.creationDate = date.getTime();
+  model.value.creationDate =
+    date.getTime() - new Date().getTimezoneOffset() * 60 * 100;
   taskStartFormattedDate.value = formattedDate;
 }
 
@@ -92,7 +93,8 @@ function updateEndDate({
     taskEndFormattedDate.value = "";
     return;
   }
-  model.value.closeDate = date.getTime();
+  model.value.closeDate =
+    date.getTime() - new Date().getTimezoneOffset() * 60 * 1000;
   taskEndFormattedDate.value = formattedDate;
 }
 

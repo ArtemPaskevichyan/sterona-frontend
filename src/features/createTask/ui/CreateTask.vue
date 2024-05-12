@@ -17,9 +17,8 @@ onMounted(() => {
 
 function getTaskTemplate(): TaskModel {
   return {
-    closeDate:
-      new Date(new Date().toDateString()).getTime() + 1000 * 60 * 60 * 24,
-    creationDate: new Date(new Date().toDateString()).getTime(),
+    closeDate: new Date().getTime() + 1000 * 60 * 60 * 24,
+    creationDate: new Date().getTime(),
     description: "",
     members: [],
     name: "",
@@ -51,6 +50,7 @@ function saveTask() {
 watch(isOpened, () => {
   if (isOpened.value === true) {
     newTask.value = getTaskTemplate();
+    console.log("TASK DATA UPDATED", newTask.value.creationDate);
   }
 });
 </script>

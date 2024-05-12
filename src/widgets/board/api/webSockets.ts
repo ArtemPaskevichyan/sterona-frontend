@@ -14,7 +14,7 @@ export class BoardWebSocketProvider {
     "hello.tasks"?: (tasks: { tasks: TaskJSON[] }) => void;
     "update.task"?: (task: TaskJSON) => void;
     "add.task"?: (task: TaskJSON) => void;
-    "delete.task"?: (taskId: number) => void;
+    "delete.task"?: ({ id }: { id: number }) => void;
   } = {};
 
   constructor({
@@ -32,7 +32,7 @@ export class BoardWebSocketProvider {
       "hello.tasks"?: (tasks: { tasks: TaskJSON[] }) => void;
       "update.task"?: (task: TaskJSON) => void;
       "add.task"?: (task: TaskJSON) => void;
-      "delete.task"?: (taskId: number) => void;
+      "delete.task"?: ({ id }: { id: number }) => void;
     };
   }) {
     this.onReceive = onReceive ?? {};
@@ -60,6 +60,7 @@ export class BoardWebSocketProvider {
   }
 
   updateTask(task: TaskJSON) {
+    console.log("sendUpdateTask", task);
     this.socket.send(JSON.stringify({ type: "update.task", data: task }));
   }
 
@@ -69,6 +70,9 @@ export class BoardWebSocketProvider {
   }
 
   deleteTask(taskId: number) {
-    this.socket.send(JSON.stringify({ type: "delete.task", data: taskId }));
+    console.log("sendDeleteTask", taskId);
+    this.socket.send(
+      JSON.stringify({ type: "delete.task", data: { id: taskId } }),
+    );
   }
 }

@@ -53,12 +53,22 @@ const updateTaskHandler = (taskJSON: TaskJSON) => {
   updateTask(task);
 };
 
+const deleteTaskHandler = ({ id }: { id: number }) => {
+  for (let taskCollection of Object.values(boardModel)) {
+    for (let i in taskCollection) {
+      if (taskCollection[i].id === id) {
+        taskCollection.splice(parseInt(i), 1);
+      }
+    }
+  }
+};
+
 const socketProvider = new BoardWebSocketProvider({
   boardId: 1,
   onReceive: {
     "add.task": addTaskHandler,
     "hello.board": updateBoardHandler,
-    "delete.task": undefined,
+    "delete.task": deleteTaskHandler,
     "hello.tasks": getTasksHandler,
     "update.board": updateBoardHandler,
     "update.task": updateTaskHandler,
@@ -122,6 +132,10 @@ function sendAddTask(task: TaskModel) {
 
 function sendTaskUpdate(task: Task) {
   socketProvider.updateTask(taskToJSON(task));
+}
+
+function sendDeleteTask(taskId: number) {
+  socketProvider.deleteTask(taskId);
 }
 
 onMounted(() => {
@@ -212,6 +226,7 @@ onMounted(() => {
         @task-dropped="(task: Task) => sendTaskUpdate({ ...task, status })"
         @task-updated="sendTaskUpdate"
         @task-created="sendAddTask"
+        @task-deleted="sendDeleteTask"
       />
     </div>
   </div>

@@ -35,4 +35,10 @@ export type BaseBoardColumnEmits = {
    * @param task – new instance of task
    */
   (e: "taskCreated", task: TaskModel): void;
+  /**
+   * Emits when user deletes a task
+   * @param e – name of emit
+   * @param taskId – id of deleting task
+   */
+  (e: "taskDeleted", taskId: number): void;
 };

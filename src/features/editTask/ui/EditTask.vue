@@ -2,7 +2,7 @@
 import { TaskDataForm } from "@/entities/taskDataForm";
 import { UIButton, UIButtonStates } from "@/shared/button";
 import { UIModal } from "@/shared/modal";
-import type { EditTaskProps, EditTaskEmits } from "../lib/type";
+import type { EditTaskProps, EditTaskEmits } from "../lib/types";
 import { onMounted, ref, watch } from "vue";
 import type { Task } from "@/shared/types/task";
 
@@ -34,6 +34,11 @@ function applyChanges() {
   isOpened.value = false;
 }
 
+function deleteTask() {
+  emit("deleted", props.task.id);
+  isOpened.value = false;
+}
+
 watch(isOpened, () => {
   if (isOpened.value === true) {
     targetTask.value = { ...props.task };
@@ -48,33 +53,40 @@ watch(isOpened, () => {
   >
     <UIModal
       v-model:is-opened="isOpened"
-      title="Добавить задачу"
+      title="Изменить задачу"
       :dont-stop-click="dontStopClickOnModal"
     >
-      <div class="createTask__content">
+      <div class="editTask__content">
         <TaskDataForm
           v-if="isOpened"
           v-model:model="targetTask"
-          class="createTask__form"
+          class="editTask__form"
           :statuses="statuses"
           :possible-members="possibleMembers"
           @do-not-stop-click-updated="updateStopClick"
           @provided-validation-callback="setValidation"
         />
-        <UIButton
-          class="createTask__createButton"
-          :type="UIButtonStates.Primary"
-          @click="applyChanges"
-        >
-          Сохранить
-        </UIButton>
+        <div class="editTask__controls">
+          <UIButton
+            :type="UIButtonStates.Danger"
+            @click="deleteTask"
+          >
+            Удалить задачу
+          </UIButton>
+          <UIButton
+            :type="UIButtonStates.Primary"
+            @click="applyChanges"
+          >
+            Сохранить
+          </UIButton>
+        </div>
       </div>
     </UIModal>
   </Teleport>
 </template>
 
 <style scoped lang="scss">
-.createTask {
+.editTask {
   &__content {
     display: flex;
     flex-direction: column;
@@ -85,7 +97,10 @@ watch(isOpened, () => {
     flex-grow: 1;
   }
 
-  &__createButton {
+  &__controls {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
     margin-left: auto;
   }
 }

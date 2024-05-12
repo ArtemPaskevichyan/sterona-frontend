@@ -99,6 +99,7 @@ function onDragStart(event: DragEvent) {
   border-left: 6px solid var(--task-color);
   color: var(--text-black);
   background-color: var(--default-background-color);
+  cursor: pointer;
 
   &__titleBlock {
     font-size: var(--default-font-size);
@@ -128,6 +129,7 @@ function onDragStart(event: DragEvent) {
   &__team {
     flex-shrink: 0;
     flex-grow: 1;
+    pointer-events: none;
   }
 
   &__progressBar {

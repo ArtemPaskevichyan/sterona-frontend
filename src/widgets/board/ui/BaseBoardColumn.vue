@@ -130,6 +130,7 @@ onMounted(() => {
     :statuses="statuses"
     :possible-members="boardMembers"
     @updated="(task: Task) => emit('taskUpdated', task)"
+    @deleted="(taskId) => emit('taskDeleted', taskId)"
   />
 </template>
 

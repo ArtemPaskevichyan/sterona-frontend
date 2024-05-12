@@ -49,12 +49,11 @@ const membersHiddenLabel = computed(() => {
     :style="{ '--members': shownMembersCount }"
   >
     <TooltipWrapper
+      v-if="membersHidden > 0"
       :label="membersHiddenLabel"
       :show-tooltip="isExpandTooltipShown"
     >
       <span
-        v-if="membersHidden > 0"
-        :style="{ '--index': props.shownMembersCount }"
         class="teamInlineCircles__circle teamInlineCircles__circle-expand"
         @mouseenter="isExpandTooltipShown = true"
         @mouseleave="isExpandTooltipShown = false"
@@ -73,10 +72,7 @@ const membersHiddenLabel = computed(() => {
       @mouseenter="membersWithTooltips[index].tooltipShown = true"
       @mouseleave="membersWithTooltips[index].tooltipShown = false"
     >
-      <span
-        class="teamInlineCircles__circle"
-        :style="{ '--index': index }"
-      >
+      <span class="teamInlineCircles__circle">
         {{ member.name[0] }}
       </span>
     </TooltipWrapper>
@@ -102,6 +98,7 @@ const membersHiddenLabel = computed(() => {
     justify-content: center;
     align-items: center;
     transition: 0.3s transform;
+    pointer-events: all;
 
     &-expand {
       cursor: pointer;
